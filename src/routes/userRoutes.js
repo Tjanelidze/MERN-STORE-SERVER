@@ -1,13 +1,10 @@
 import express from 'express';
+import userController from '../controllers/userController.js';
 
 const router = express.Router();
 
-router.post('/', () => {
-  console.log('To Register');
-});
-router.post('/auth', () => {
-  console.log('To authorize');
-});
+router.post('/', userController.registerUser);
+router.post('/auth', userController.authUser);
 router.post('/logout', () => {
   console.log('To logout');
 });
@@ -19,3 +16,5 @@ router
   .patch(() => {
     console.log('To Update profile');
   });
+
+export default router;
