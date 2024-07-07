@@ -4,7 +4,7 @@ import User from '../models/userModel.js';
 
 // @desc Auth user/set token
 // route POST /api/users/auth
-// @access public
+// @access Public
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -24,7 +24,7 @@ const authUser = asyncHandler(async (req, res) => {
 
 // @desc Register a new user
 // route POST /api/users
-// @access public
+// @access Public
 const registerUser = asyncHandler(async (req, res) => {
   const { email, firstname, lastname, password } = req.body;
 
@@ -54,7 +54,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // @desc Logout user
 // route POST /api/users/logout
-// access public
+// access Public
 
 const logoutUser = asyncHandler(async (req, res) => {
   res.cookie('jwt', '', {
@@ -64,8 +64,23 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'User logged out' });
 });
 
+// @desc Get User Profile
+// route GET /api/users/profile
+// access Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = {
+    _id: req.user._id,
+    firstname: req.user.firstname,
+    lastname: req.user.lastname,
+    email: req.user.email,
+  };
+
+  res.status(200).json(user);
+});
+
 export default {
   authUser,
   registerUser,
   logoutUser,
+  getUserProfile,
 };
