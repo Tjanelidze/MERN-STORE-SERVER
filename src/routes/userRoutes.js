@@ -5,9 +5,7 @@ const router = express.Router();
 
 router.post('/', userController.registerUser);
 router.post('/auth', userController.authUser);
-router.post('/logout', () => {
-  console.log('To logout');
-});
+router.post('/logout', userController.logoutUser);
 router
   .route('/profile')
   .get(() => {
