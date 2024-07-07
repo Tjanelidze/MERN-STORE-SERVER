@@ -10,8 +10,6 @@ router.post('/logout', userController.logoutUser);
 router
   .route('/profile')
   .get(protect, userController.getUserProfile)
-  .patch(protect, () => {
-    console.log('To Update profile');
-  });
+  .put(protect, userController.updateUserProfile);
 
 export default router;
