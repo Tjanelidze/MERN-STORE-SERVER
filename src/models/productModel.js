@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const ratingSchema = new mongoose.Schema({
-  rate: { type: Number, required: true },
-  count: { type: Number, required: true },
+  rate: { type: Number, default: 0 },
+  count: { type: Number, default: 0 },
 });
 
 const productSchema = mongoose.Schema(
@@ -16,26 +16,22 @@ const productSchema = mongoose.Schema(
       required: true,
     },
     price: {
-      type: String,
+      type: Number,
       required: true,
     },
     category: {
       type: String,
       required: true,
     },
-    images: {
+    image: {
       type: String,
       required: true,
     },
     stock: {
       type: Number,
       required: true,
-      default: 0,
     },
-    rating: {
-      type: ratingSchema,
-      default: 0,
-    },
+    rating: [ratingSchema],
   },
   {
     timestamps: true,
