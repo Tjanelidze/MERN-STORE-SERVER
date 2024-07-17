@@ -1,5 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../models/productModel.js';
+import Rating from '../models/ratingModel.js';
+import User from '../models/userModel.js';
 
 // @desc Add Product
 // route POST /api/products
@@ -19,6 +21,7 @@ const addProduct = asyncHandler(async (req, res) => {
     throw new Error('Price must be a number');
   }
 
+  // Create the product
   const product = await Product.create({
     title,
     price,
@@ -36,10 +39,79 @@ const addProduct = asyncHandler(async (req, res) => {
   }
 });
 
-// TODO: Get Products
+// @desc Rate Product
+// route POST /api/products/:productId
+// @access Private
+const rateProduct = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const { _id: userId } = req.user;
+
+  // Check if all the required fields are present
+  if (productId === undefined || userId === undefined) {
+    res.status(400);
+    throw new Error('Invalid product or user');
+  }
+
+  // Check if the product exists
+  const product = await Product.findById(productId);
+  if (!product) {
+    res.status(400);
+    throw new Error('Product not found');
+  }
+
+  // Check if the user exists
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(400);
+    throw new Error('User not found');
+  }
+
+  // Check if the user has already rated the product
+  const foundRating = await Rating.findOne({
+    product: productId,
+    user: userId,
+  });
+  if (foundRating) {
+    res.status(400);
+    throw new Error('Already rated');
+  }
+
+  // Create the rating
+  const rating = await Rating.create({
+    product: productId,
+    user: userId,
+    rate: req.body.rate,
+    count: req.body.count,
+  });
+
+  // Add the rating to the product
+  if (rating) {
+    res.status(200).json({ message: 'Rated successfully' });
+  } else {
+    res.status(400);
+    throw new Error('Invalid rating data');
+  }
+});
+
+// @desc Get Products
+// route GET /api/products
+// @access Public
+const getProducts = asyncHandler(async (req, res) => {
+  // Find the product and populate the rating field
+  const product = await Product.find().populate('ratings').exec();
+
+  // Check if the product exists
+  if (!product) {
+    res.status(400);
+    throw new Error('Products not found');
+  }
+
+  // Return the products
+  res.status(200).json(product);
+});
 
 // TODO: Update Product
 
 // TODO: Delete Product
 
-export default { addProduct };
+export default { addProduct, getProducts, rateProduct };

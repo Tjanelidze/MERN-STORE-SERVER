@@ -1,10 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 
-const ratingSchema = new mongoose.Schema({
-  rate: { type: Number, default: 0 },
-  count: { type: Number, default: 0 },
-});
-
 const productSchema = mongoose.Schema(
   {
     title: {
@@ -31,12 +26,32 @@ const productSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    rating: [ratingSchema],
   },
   {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        // Remove the virtual `id` field when serializing to JSON
+        delete ret.id;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        // Remove the virtual `id` field when serializing to JSON
+        delete ret.id;
+      },
+    },
     timestamps: true,
   }
 );
+
+// Virtual populate
+productSchema.virtual('ratings', {
+  ref: 'Rating',
+  localField: '_id',
+  foreignField: 'product',
+});
 
 const Product = mongoose.model('Product', productSchema);
 

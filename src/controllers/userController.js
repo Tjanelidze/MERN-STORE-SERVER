@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import generateToken from '../utils/generateToken.js';
 import User from '../models/userModel.js';
+import Rating from '../models/ratingModel.js';
 
 // @desc Auth user/set token
 // route POST /api/users/auth
@@ -35,11 +36,19 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
+  // Create Rating
+  // const rating = await Rating.create({
+  //   rate: 0,
+  //   count: 0,
+  // });
+
+  // Create the user
   const user = await User.create({
     firstname,
     lastname,
     email,
     password,
+    // rating: rating._id,
   });
 
   if (user) {
@@ -68,6 +77,11 @@ const logoutUser = asyncHandler(async (req, res) => {
 // route GET /api/users/profile
 // access Private
 const getUserProfile = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    res.status(401);
+    throw new Error('User not found');
+  }
+
   const user = {
     _id: req.user._id,
     firstname: req.user.firstname,

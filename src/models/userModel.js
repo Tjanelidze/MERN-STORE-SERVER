@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = mongoose.Schema(
@@ -26,9 +26,29 @@ const userSchema = mongoose.Schema(
     },
   },
   {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        // Remove the virtual `id` field when serializing to JSON
+        delete ret.id;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        // Remove the virtual `id` field when serializing to JSON
+        delete ret.id;
+      },
+    },
     timestamps: true,
   }
 );
+
+userSchema.virtual('ratings', {
+  ref: 'Rating',
+  localField: '_id',
+  foreignField: 'user',
+});
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) next();
