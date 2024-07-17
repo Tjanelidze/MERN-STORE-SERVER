@@ -13,6 +13,7 @@ router
 router
   .route('/:productId')
   .post(protect, productController.rateProduct)
-  .put(protect, productController.updateProduct);
+  .put(protect, productController.updateProduct)
+  .delete(protect, productController.deleteProduct);
 
 export default router;

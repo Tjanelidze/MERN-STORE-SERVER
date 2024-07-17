@@ -110,10 +110,18 @@ const getProducts = asyncHandler(async (req, res) => {
   res.status(200).json(product);
 });
 
-// TODO: Update Product
+// @desc Update product
+// PUT /api/products/:productId
+// Access Private
 const updateProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
   const product = await Product.findById(productId);
+
+  // Check if the product exists
+  if (!product) {
+    res.status(400);
+    throw new Error('Product not found');
+  }
 
   if (product) {
     product.title = req.body.title || product.title;
@@ -132,6 +140,33 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 });
 
-// TODO: Delete Product
+// @desc Delete product
+// DELETE /api/products/:productId
+// Access Private
+const deleteProduct = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const product = await Product.findById(productId);
 
-export default { addProduct, getProducts, rateProduct, updateProduct };
+  // Check if product exists
+  if (!product) {
+    res.status(400);
+    throw new Error('Product not found');
+  }
+
+  // Find and Delete product
+  await Product.deleteOne({ _id: productId });
+
+  // Send Success response
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
+
+export default {
+  addProduct,
+  getProducts,
+  rateProduct,
+  updateProduct,
+  deleteProduct,
+};
