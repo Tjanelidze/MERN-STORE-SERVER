@@ -10,6 +10,9 @@ router
   .get(protect, productController.getProducts)
   .post(protect, productController.addProduct);
 
-router.route('/:productId').post(protect, productController.rateProduct);
+router
+  .route('/:productId')
+  .post(protect, productController.rateProduct)
+  .put(protect, productController.updateProduct);
 
 export default router;

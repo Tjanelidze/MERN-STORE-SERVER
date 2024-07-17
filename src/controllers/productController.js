@@ -111,7 +111,27 @@ const getProducts = asyncHandler(async (req, res) => {
 });
 
 // TODO: Update Product
+const updateProduct = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const product = await Product.findById(productId);
+
+  if (product) {
+    product.title = req.body.title || product.title;
+    product.description = req.body.description || product.description;
+    product.price = req.body.price || product.price;
+    product.category = req.body.category || product.category;
+    product.image = req.body.image || product.image;
+    product.stock = req.body.title || product.title;
+
+    const updateProduct = await product.save();
+
+    res.status(200).json(updateProduct);
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
 
 // TODO: Delete Product
 
-export default { addProduct, getProducts, rateProduct };
+export default { addProduct, getProducts, rateProduct, updateProduct };
